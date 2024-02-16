@@ -1,0 +1,17 @@
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+}
+.btns {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+
+.clickable {
+  padding: none;
+  background: none;
+  border: none;
+  font-size: 30px;
+}
