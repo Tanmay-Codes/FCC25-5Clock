@@ -3,18 +3,25 @@ import "./clock.css";
 export default function Clock() {
   const [breaknum, setBreaknum] = useState(5);
   const [session, setSessionnum] = useState(25);
-  const timeLeft = new Date(session * 60 * 1000).toISOString().slice(14, 19);
-  const [clock, setClock] = useState(timeLeft);
+  // const timeLeft = new Date(session * 60 * 1000).toISOString().slice(14, 19);
+  const [clock, setClock] = useState(
+    new Date(session * 60 * 1000).toISOString().slice(14, 19)
+  );
+  const handleTime = (time) => {
+    let t = typeof time === "number" ? time : +time.split(":")[0];
+    return new Date(t * 60 * 1000).toISOString().slice(14, 19);
+  };
   const handlePlay = () => {
-    console.log(timeLeft.split(":"));
-    const timer = setInterval(() => {
-      setClock((prev) =>
-        new Date((prev.split(":")[0] * 60 + +prev.split(":")[1]) * 1000 - 1000)
-          .toISOString()
-          .slice(14, 19)
-      );
-    }, 1000);
-    if (clock === "00:00") clearInterval(timer);
+    console.log("working!");
+    // console.log(timeLeft.split(":"));
+    // const timer = setInterval(() => {
+    //   setClock((prev) =>
+    //     new Date((prev.split(":")[0] * 60 + +prev.split(":")[1]) * 1000 - 1000)
+    //       .toISOString()
+    //       .slice(14, 19)
+    //   );
+    // }, 1000);
+    // if (clock === "00:00") clearInterval(timer);
   };
   return (
     <div className="clock">
@@ -56,9 +63,12 @@ export default function Clock() {
             <button
               className="clickable"
               id="session-decrement"
-              onClick={() =>
-                setSessionnum((prev) => (prev !== 1 ? prev - 1 : prev))
-              }
+              onClick={() => {
+                setSessionnum((prev) => (prev !== 1 ? prev - 1 : prev));
+                setClock((prev) =>
+                  prev !== 1 ? handleTime(prev - 1) : handleTime(prev)
+                );
+              }}
             >
               ⬇️
             </button>
