@@ -1,28 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./clock.css";
 export default function Clock() {
   const [breaknum, setBreaknum] = useState(5);
   const [session, setSessionnum] = useState(25);
-  // const timeLeft = new Date(session * 60 * 1000).toISOString().slice(14, 19);
-  const [clock, setClock] = useState(
-    new Date(session * 60 * 1000).toISOString().slice(14, 19)
-  );
-  const handleTime = (time) => {
-    let t = typeof time === "number" ? time : +time.split(":")[0];
-    return new Date(t * 60 * 1000).toISOString().slice(14, 19);
+  const [counter, setCounter] = useState(1500);
+  const [clockState, setClockState] = useState({
+    start: false,
+    pause: true,
+    reset: false,
+  });
+  let minutes = Math.floor(counter / 60)
+    .toString()
+    .padStart(2, "0");
+  let seconds = (counter - minutes * 60).toString().padStart(2, "0");
+  useEffect(() => {
+    setCounter(session * 60);
+  }, [session]);
+  useEffect(() => {
+    if (clockState.pause) return;
+    let timer =
+      counter > 0 && setInterval(() => setCounter((prev) => prev - 1), 1000);
+
+    return () => clearInterval(timer);
+  }, [counter, clockState]);
+  const handlePlayPause = (action) => {
+    //   console.log("working!");
+    //   // console.log(timeLeft.split(":"));
+    //   let timer = 1500;
+    //   if (action === "start") {
+    //     timer = setInterval(() => {
+    //       setClock((prev) =>
+    //         new Date(
+    //           (prev.split(":")[0] * 60 + +prev.split(":")[1]) * 1000 - 1000
+    //         )
+    //           .toISOString()
+    //           .slice(14, 19)
+    //       );
+    //     }, 1000);
+    //     console.log(timer);
+    //   } else if (action === "stop") {
+    //     clearInterval(timer);
+    //     console.log(timer);
+    //     // setClock(
+    //       //   (prev) =>
+    //       //     new Date((prev.split(":")[0] * 60 + +prev.split(":")[1]) * 1000)
+    //     // );
+    //   }
+    console.log("triggered!!");
   };
-  const handlePlay = () => {
-    console.log("working!");
-    // console.log(timeLeft.split(":"));
-    // const timer = setInterval(() => {
-    //   setClock((prev) =>
-    //     new Date((prev.split(":")[0] * 60 + +prev.split(":")[1]) * 1000 - 1000)
-    //       .toISOString()
-    //       .slice(14, 19)
-    //   );
-    // }, 1000);
-    // if (clock === "00:00") clearInterval(timer);
-  };
+
   return (
     <div className="clock">
       <h1>25 + 5 Clock</h1>
@@ -65,9 +91,6 @@ export default function Clock() {
               id="session-decrement"
               onClick={() => {
                 setSessionnum((prev) => (prev !== 1 ? prev - 1 : prev));
-                setClock((prev) =>
-                  prev !== 1 ? handleTime(prev - 1) : handleTime(prev)
-                );
               }}
             >
               ⬇️
@@ -77,11 +100,23 @@ export default function Clock() {
       </div>
       <div className="interface">
         <h2 id="timer-label">Session</h2>
-        <p>{clock}</p>
+        <p>{minutes + " : " + seconds} </p>
         <div className="interface__controls">
-          <button onClick={handlePlay}>▶️</button>
-          <button>⏸️</button>
-          <button>↗️</button>
+          <button
+            onClick={() =>
+              setClockState((prev) => ({ ...prev, pause: !prev.pause }))
+            }
+          >
+            ▶️
+          </button>
+          <button
+            onClick={() =>
+              setClockState((prev) => ({ ...prev, pause: !prev.pause }))
+            }
+          >
+            ⏸️
+          </button>
+          <button onClick={() => setCounter(session * 60)}>↗️</button>
         </div>
       </div>
     </div>
